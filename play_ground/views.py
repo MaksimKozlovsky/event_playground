@@ -6,9 +6,9 @@ from django.views.generic import CreateView
 from rest_framework.decorators import api_view
 from .forms import RegisterUserForm
 
-from .models import Event
+from .models import Event, Ticket, Company
 from rest_framework import viewsets
-from .serializers import EventSerializer
+from .serializers import EventSerializer, TicketSerializer, CompanySerializer
 # Create your views here.
 
 
@@ -46,3 +46,13 @@ class SignUpView(CreateView):
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all().order_by('title')
     serializer_class = EventSerializer
+
+
+class TicketViewSet(viewsets.ModelViewSet):
+    queryset = Ticket.objects.all().order_by('number')
+    serializer_class = TicketSerializer
+
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all().order_by('title')
+    serializer_class = CompanySerializer
