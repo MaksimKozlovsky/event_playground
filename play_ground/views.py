@@ -32,10 +32,6 @@ def get_event(request, pk:int):
                          'count': event.ticket_count})
 
 
-# class EventViewSet(viewsets.ModelViewSet):
-#     queryset = Event.objects.all().order_by('title')
-#     serializer_class = EventSerializer
-
 @api_view()
 def test_drf(request):
     pass
@@ -45,3 +41,8 @@ class SignUpView(CreateView):
     template_name = 'register.html'
     form_class = RegisterUserForm
     success_url = reverse_lazy('register')
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all().order_by('title')
+    serializer_class = EventSerializer
