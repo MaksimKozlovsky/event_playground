@@ -11,9 +11,10 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
 class TicketSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Ticket
-        fields = ('price', 'number', 'vip', 'user')
+        fields = ('price', 'number', 'vip')
 
 
 class CompanySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
+        model = Company
         fields = ('title',)

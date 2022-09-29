@@ -4,7 +4,9 @@ from .views import get_event, get_all_events, test_drf, SignUpView
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r'titles', views.EventViewSet)
+router.register(r'event', views.EventViewSet)
+router.register(r'ticket', views.TicketViewSet)
+router.register(r'company', views.CompanyViewSet)
 
 
 urlpatterns = [
