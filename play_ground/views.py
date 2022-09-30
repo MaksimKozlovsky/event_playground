@@ -1,9 +1,13 @@
+from django.forms import model_to_dict
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .forms import RegisterUserForm
 
 from .models import Event, Ticket, Company
@@ -56,3 +60,16 @@ class TicketViewSet(viewsets.ModelViewSet):
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all().order_by('title')
     serializer_class = CompanySerializer
+
+
+# class EventViewSet(APIView):
+#     def get(self, request):
+#         lst = Event.objects.all().values()
+#         return Response({'event': list(lst)})
+#
+#     def post(self, request):
+#         # event_new = Event.objects.created(
+#         #     title=request.data['title'],
+#         #     description=request.data['description']
+#         # )
+#         return Response({'event': 'lnfkbzb kdfbib'})
