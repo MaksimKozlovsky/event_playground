@@ -7,14 +7,14 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.parsers import JSONParser
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .forms import RegisterUserForm
 
 from .models import Event, Ticket, Company
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from .serializers import EventSerializer, TicketSerializer, CompanySerializer
 # Create your views here.
 
@@ -130,4 +130,22 @@ def ticket_view_set(request, pk: int):
             ticket.save()
             return JsonResponse(serializer.data)
         return JsonResponse(serializer.errors)
+
+
+class CompanySetView(generics.RetrieveAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    permission_classes = [IsAuthenticated]
+
+
+class TicketSetView(generics.ListCreateAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class EventSetView(generics.RetrieveUpdateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [IsAuthenticated]
 
