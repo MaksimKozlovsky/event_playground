@@ -5,7 +5,8 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, BasePermission
 from rest_framework.response import Response
@@ -13,24 +14,26 @@ from rest_framework.views import APIView
 
 from .forms import RegisterUserForm
 
-from .models import Event, Ticket, Company
-from rest_framework import viewsets, generics
-from .serializers import EventSerializer, TicketSerializer, CompanySerializer
+from .models import Event, Ticket, Company, CustomUser
+from rest_framework import viewsets, generics, status
+from .serializers import EventSerializer, TicketSerializer, CompanySerializer, CustomUserSerializer, UserSerializer
+
+
 # Create your views here.
 
 
-def get_all_events(request):
-    events = Event.objects.all()
-    return JsonResponse({
-        "code": 200,
-        "data": [
-            {
-                "id": e.id,
-                "title": e.title,
-                "count": e.ticket_count,
-                "organizer_id": e.organizer_id,
-            } for e in events]
-    })
+# def get_all_events(request):
+#     events = Event.objects.all()
+#     return JsonResponse({
+#         "code": 200,
+#         "data": [
+#             {
+#                 "id": e.id,
+#                 "title": e.title,
+#                 "count": e.ticket_count,
+#                 "organizer_id": e.organizer_id,
+#             } for e in events]
+#     })
 
 
 def get_event(request, pk:int):
@@ -39,21 +42,21 @@ def get_event(request, pk:int):
                          'count': event.ticket_count})
 
 
-@api_view(['GET', 'POST'])
-@csrf_exempt
-def EventViewSet(request):
-    if request.method == 'GET':
-        event = Event.objects.all()
-        serializer = EventSerializer(event, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-
-        serializer = EventSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors)
+# @api_view(['GET', 'POST'])
+# @csrf_exempt
+# def EventViewSet(request):
+#     if request.method == 'GET':
+#         event = Event.objects.all()
+#         serializer = EventSerializer(event, many=True)
+#         return Response(serializer.data)
+#
+#     elif request.method == 'POST':
+#
+#         serializer = EventSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return JsonResponse(serializer.data)
+#         return JsonResponse(serializer.errors)
 
 
 
@@ -61,11 +64,6 @@ class SignUpView(CreateView):
     template_name = 'register.html'
     form_class = RegisterUserForm
     success_url = reverse_lazy('register')
-
-
-# class EventViewSet(viewsets.ModelViewSet):
-#     queryset = Event.objects.all().order_by('title')
-#     serializer_class = EventSerializer
 
 
 class TicketViewSet(viewsets.ModelViewSet):
@@ -149,3 +147,33 @@ class EventSetView(generics.RetrieveUpdateAPIView):
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated]
 
+
+@api_view(['GET'])
+def statuss(request):
+    return Response({'status': 'OK'}, status=status.HTTP_200_OK)
+
+# Дальше, добавить возможность получать всех юзеров и редактировать выбранного юзера
+
+
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    pagination_class = LimitOffsetPagination
+
+    @action(detail=False, methods=['GET'])
+    def get_tiers(self, request):
+        data = {human_readable: tier for (tier, human_readable) in CustomUser.TIERS}
+        return Response(data, status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_one_user(request, pk: int):
+    one_user = CustomUser.objects.get(pk=pk)
+    serializer = CustomUserSerializer(one_user)
+    return Response(serializer.data)
+
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    pagination_class = LimitOffsetPagination

@@ -26,7 +26,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.contrib import messages
 
-from .models import Event, Ticket, Company
+from .models import Event, Ticket, Company, CustomUser
 
 
 # Register your models here.
@@ -73,3 +73,7 @@ class TicketAdmin(admin.ModelAdmin):
         return username
 
     get_username.short_description = "username"
+
+@admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
+    pass

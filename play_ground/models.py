@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 
 # Create your models here.
@@ -10,6 +10,19 @@ class BaseDateMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+class CustomUser(AbstractUser):
+
+    TIERS = (
+        ('G', 'gold'),
+        ('S', 'silver'),
+        ('P', 'platinum')
+    )
+    tier = models.CharField(max_length=150, choices=TIERS, null=True, blank=True)
+
+    def __str__(self):
+        return self.username
 
 
 class Event(BaseDateMixin):
@@ -51,7 +64,7 @@ class Ticket(BaseDateMixin):
     number = models.PositiveIntegerField(verbose_name='Номер билета')
     vip = models.BooleanField(verbose_name='Статус билета "ВИП"', default=False)
     user = models.ForeignKey(
-        User,
+        CustomUser,
         verbose_name='Посетитель',
         on_delete=models.CASCADE, null=True,
     )
