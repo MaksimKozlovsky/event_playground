@@ -173,7 +173,7 @@ def get_one_user(request, pk: int):
     return Response(serializer.data)
 
 
-class EventViewSet(viewsets.ModelViewSet):
+class EventViewSet(viewsets.ModelViewSet): # используем только его
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     pagination_class = LimitOffsetPagination

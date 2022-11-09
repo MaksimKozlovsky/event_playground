@@ -136,5 +136,5 @@ VIP_TICKET_RATE = 0.01
 AUTH_USER_MODEL = 'play_ground.CustomUser'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 5
 }
